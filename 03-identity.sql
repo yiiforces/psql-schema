@@ -38,32 +38,32 @@ CREATE TYPE type_identity_history_passw as(
 
 CREATE TABLE sys_user(
 	id serial,
-	status_acceso           character varying(20)    NOT NULL default  'EMAIL_VERIFY',
-	roles                   integer[]                DEFAULT ARRAY[1], -- 1 perfil de usuario  (login + account)
-	email                   character varying(50)    NOT NULL,
-	auth_key 				character varying(16)    DEFAULT NULL,
-	pin_token               type_identity_pin_token  DEFAULT NULL,
+	status_acceso           character varying(20)             NOT NULL default  'EMAIL_VERIFY',
+	roles                   integer[]                         DEFAULT ARRAY[1], -- 1 perfil de usuario  (login + account)
+	email                   character varying(50)             NOT NULL,
+	auth_key                character varying(16)             DEFAULT NULL,
+	pin_token               type_identity_pin_token           DEFAULT NULL,
 
-	first_name				character varying(50)    default NULL,
-	last_name 				character varying(50)    default NULL,
+	first_name              character varying(50)             default NULL,
+	last_name               character varying(50)             default NULL,
 
-	passw                   character varying(70)    DEFAULT NULL,
-	passw_token             character varying(16)    DEFAULT NULL,
-	passw_force_change	    boolean                  DEFAULT TRUE,
-	passw_expire_on         date                     DEFAULT NULL,
-	passw_history 			type_identity_history_passw[]     DEFAULT NULL,
+	passw                   character varying(70)             DEFAULT NULL,
+	passw_token             character varying(16)             DEFAULT NULL,
+	passw_force_change      boolean                           DEFAULT TRUE,
+	passw_expire_on         date                              DEFAULT NULL,
+	passw_history           type_identity_history_passw[]     DEFAULT NULL,
 
-	ban_reason              type_identity_ban_reason   DEFAULT NULL,
-	ban_history             type_identity_ban_reason[] DEFAULT NULL,
+	ban_reason              type_identity_ban_reason          DEFAULT NULL,
+	ban_history             type_identity_ban_reason[]        DEFAULT NULL,
 
-	created_by 				integer DEFAULT NULL,
-	updated_by 				integer DEFAULT NULL,
+	created_by              integer DEFAULT NULL,
+	updated_by              integer DEFAULT NULL,
 
-	created_at 				timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-	updated_at 				timestamp with time zone DEFAULT NULL,
+	created_at              timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+	updated_at              timestamp with time zone DEFAULT NULL,
 
-	last_type_login 		timestamp with time zone    DEFAULT NULL,
-	history_success_login 	type_identity_history_login[]        DEFAULT NULL,
+	last_type_login         timestamp with time zone             DEFAULT NULL,
+	history_success_login   type_identity_history_login[]        DEFAULT NULL,
 	history_error_login     type_identity_history_error_login[]  DEFAULT NULL,
 	primary key (id),
 	CONSTRAINT ck1_sys_user check (status_acceso in ('ACTIVE', 'INACTIVE', 'PIN_VERIFY', 'EMAIL_VERIFY') )
@@ -201,7 +201,7 @@ BEGIN
 	select true into _cksa  WHERE UPPER(status_acceso) in('ACTIVE', 'INACTIVE', 'EMAIL_VERIFY');
 	IF(_cksa <> TRUE) THEN
 		_status.status_op   = false;
-		_status.status_code = 'INVALID_STATUS_ACCESO';
+		_status.status_code = 'INVALID_STATUS_ACCESS';
 		return _status;
 	END IF;
 
