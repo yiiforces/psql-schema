@@ -146,15 +146,15 @@ EXECUTE PROCEDURE tgb_sys_user();
 
 CREATE OR REPLACE FUNCTION  _add_user(
 	tb_relation           TEXT,
-	created_by           integer,
+	created_by            integer,
 	email                 character varying(50),
-	first_name               character varying(50),
+	first_name            character varying(50),
 	last_name             character varying(50),
 	status_acceso         character varying(20),
 	passw                 character varying(70),
 	passw_timelife        int, -- nro dias antes de vencerse el password
-	passw_force_change boolean,
-	roles                 INT[]
+	passw_force_change    boolean,
+	roles                 int[]
 ) RETURNS type_status_row AS
 $BODY$
 DECLARE
