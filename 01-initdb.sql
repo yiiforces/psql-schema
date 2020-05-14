@@ -160,3 +160,49 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
+
+
+
+create table cache_schema(
+    table_name  varchar(255) not null unique,
+    num_rows    bigint  not null default 0,
+    revision    integer not null default 0, -- time
+    primary key (table_name)
+);
+
+CREATE UNIQUE INDEX cache_schema_index01 ON cache_schema (table_name);
+CREATE        INDEX cache_schema_index02 ON cache_schema (num_rows);
+CREATE        INDEX cache_schema_index03 ON cache_schema (revision);
+
+
+CREATE OR REPLACE function register_cache() RETURNS trigger AS
+$BODY$
+DECLARE
+    _rc  RECORD;
+    _toInsert BOOLEAN := true;
+BEGIN
+
+    SELECT * into _rc FROM cache_schema WHERE table_name = TG_TABLE_NAME;
+    IF(_rc is  not null) THEN
+    _toInsert := false;
+    END IF;
+
+    EXECUTE format('select count(*), EXTRACT(EPOCH FROM CURRENT_TIMESTAMP)::INT from %s', TG_TABLE_NAME) into _rc.num_rows, _rc.revision;
+
+    IF(_toInsert is true ) THEN
+        INSERT into cache_schema  (num_rows, revision, table_name ) values (_rc.num_rows, _rc.revision, TG_TABLE_NAME);
+    ELSE
+    UPDATE cache_schema SET
+        num_rows     = _rc.num_rows,
+        revision     = _rc.revision
+    WHERE table_name = TG_TABLE_NAME;
+    END IF;
+
+    IF(TG_OP = 'DELETE') THEN
+        RETURN OLD;
+    ELSE
+        RETURN NEW;
+    END IF;
+END
+$BODY$
+language plpgsql;

@@ -141,6 +141,12 @@ ON sys_user
 FOR EACH ROW
 EXECUTE PROCEDURE tgb_sys_user();
 
+CREATE TRIGGER tga_sys_user_cache
+AFTER INSERT OR UPDATE OR DELETE
+ON sys_user
+FOR EACH ROW
+EXECUTE PROCEDURE register_cache();
+
 
 -- sys_user_functions:
 
@@ -237,3 +243,5 @@ $BODY$
 LANGUAGE plpgsql;
 
 --
+
+
